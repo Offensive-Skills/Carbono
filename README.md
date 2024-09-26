@@ -1,6 +1,6 @@
 # Introducción
 
-![image](./images/image_writeup.png)
+![image](./images/carbono.png)
 
 Herramienta para la automatización de despliegue de entornos para realizar retos de **pentesting**.
 
