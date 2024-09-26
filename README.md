@@ -1,6 +1,7 @@
-# Introducción
+# Carbono
 
-![image](./images/image_writeup.png)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/GjGomNuy79Q?si=2iEtLIBeu3OaFWUl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 
 Herramienta para la automatización de despliegue de entornos para realizar retos de **pentesting**.
 
