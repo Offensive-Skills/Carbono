@@ -98,7 +98,7 @@ else
 fi
 
 # 4. Añadir el usuario actual al grupo docker
-CURRENT_USER=$(logname)
+CURRENT_USER=$(whoami)
 if id -nG "$CURRENT_USER" | grep -qw "docker"; then
     echo_success "El usuario '$CURRENT_USER' ya está en el grupo 'docker'."
 else
@@ -141,10 +141,10 @@ echo_info "Instalando las librerías de pip necesarias..."
 pip install --upgrade pip
 
 # Instalar las librerías
-pip install customtkinter==5.2.2 pillow==10.4.0 requests==2.32.3 --break-system-packages
+pip install tk==0.1.0 customtkinter==5.2.2 pillow==10.4.0 requests==2.32.3 --break-system-packages
 
 # Verificar la instalación de las librerías
-REQUIRED_LIBS=("customtkinter==5.2.2" "pillow==10.4.0" "requests==2.32.3")
+REQUIRED_LIBS=("tk==0.1.0 customtkinter==5.2.2" "pillow==10.4.0" "requests==2.32.3")
 for lib in "${REQUIRED_LIBS[@]}"; do
     pip show "${lib%%==*}" > /dev/null 2>&1
     if [ $? -eq 0 ]; then
