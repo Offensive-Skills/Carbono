@@ -1,0 +1,4 @@
+# Gitignore
+
+# Ignore pipenv files
+Pipfile*
