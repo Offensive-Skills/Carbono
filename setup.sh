@@ -203,8 +203,15 @@ apt-get clean
 
 echo_success "Instalación y configuración completadas exitosamente."
 echo_info "Por favor, reinicia tu sesión para que los cambios en el grupo 'docker' surtan efecto."
+echo
+echo
 
-echo_info "Para activar el entorno virtual, navega al directorio del script y ejecuta:"
-echo "source $VENV_DIR/bin/activate"
+
+echo_info "¡Enhorabuena. Ya has instalado Carbono! "
+echo_info "Para poder ejecutarlo, necesitas ejecutar lo siguiente:"
+echo_info "    source venv/bin/activate"
+echo
+echo_info "Ahora podrás arrancar la aplicación ejecutando:"
+echo_info "    python app.py --username <user> --api-token <token>
 
 
