@@ -212,6 +212,6 @@ echo_info "Para poder ejecutarlo, necesitas ejecutar lo siguiente:"
 echo_info "    source venv/bin/activate"
 echo
 echo_info "Ahora podrás arrancar la aplicación ejecutando:"
-echo_info "    python app.py --username <user> --api-token <token>
+echo_info "    python app.py --username <user> --api-token <token>"
 
 
