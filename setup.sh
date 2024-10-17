@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # setup.sh - Script de instalación para la aplicación Offensive Skills
-# Este script instala Python3, pip, Docker, Docker Compose y las librerías de pip necesarias.
+# Este script instala Python3, pip, Docker, Docker Compose y las librerías de pip necesarias dentro de un entorno virtual en el directorio del script.
 
 # Función para mostrar mensajes informativos
 function echo_info() {
@@ -24,6 +24,21 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+# Identificar el usuario no root que invocó sudo
+if [ -n "$SUDO_USER" ] && [ "$SUDO_USER" != "root" ]; then
+    USER_NAME="$SUDO_USER"
+    USER_HOME=$(getent passwd "$USER_NAME" | cut -d: -f6)
+else
+    echo_error "No se pudo identificar un usuario no root. Asegúrate de ejecutar el script con sudo desde una cuenta de usuario no root."
+    exit 1
+fi
+
+echo_info "Usuario identificado: $USER_NAME con directorio home en $USER_HOME"
+
+# Detectar el directorio del script
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo_info "Directorio del script detectado: $SCRIPT_DIR"
+
 # Actualizar la lista de paquetes
 echo_info "Actualizando la lista de paquetes..."
 apt-get update -y
@@ -42,7 +57,7 @@ if command_exists python3; then
     echo_success "Python3 ya está instalado."
 else
     echo_info "Instalando Python3..."
-    apt-get install -y python3 python3-pip
+    apt-get install -y python3 python3-pip python3-venv
     if command_exists python3; then
         echo_success "Python3 instalado correctamente."
     else
@@ -86,7 +101,7 @@ else
     apt-get update -y
 
     # Instalar Docker Engine
-    apt-get install -y docker-cli 
+    apt-get install -y docker-ce docker-cli containerd.io
 
     # Verificar la instalación de Docker
     if command_exists docker; then
@@ -97,17 +112,16 @@ else
     fi
 fi
 
-# 4. Añadir el usuario actual al grupo docker
-CURRENT_USER=$(whoami)
-if id -nG "$CURRENT_USER" | grep -qw "docker"; then
-    echo_success "El usuario '$CURRENT_USER' ya está en el grupo 'docker'."
+# 4. Añadir el usuario al grupo docker
+if id -nG "$USER_NAME" | grep -qw "docker"; then
+    echo_success "El usuario '$USER_NAME' ya está en el grupo 'docker'."
 else
-    echo_info "Añadiendo al usuario '$CURRENT_USER' al grupo 'docker'..."
-    usermod -aG docker "$CURRENT_USER"
-    if id -nG "$CURRENT_USER" | grep -qw "docker"; then
-        echo_success "Usuario '$CURRENT_USER' añadido al grupo 'docker' correctamente."
+    echo_info "Añadiendo al usuario '$USER_NAME' al grupo 'docker'..."
+    usermod -aG docker "$USER_NAME"
+    if id -nG "$USER_NAME" | grep -qw "docker"; then
+        echo_success "Usuario '$USER_NAME' añadido al grupo 'docker' correctamente."
     else
-        echo_error "Fallo al añadir el usuario '$CURRENT_USER' al grupo 'docker'."
+        echo_error "Fallo al añadir el usuario '$USER_NAME' al grupo 'docker'."
         echo_info "Por favor, cierra la sesión y vuelve a iniciarla para que los cambios surtan efecto."
     fi
 fi
@@ -133,33 +147,41 @@ else
     fi
 fi
 
-# 6. Instalar librerías de pip necesarias
-echo_info "Instalando las librerías de pip necesarias..."
+# 6. Configurar el entorno virtual y instalar las librerías de pip necesarias en el directorio del script
+VENV_DIR="$SCRIPT_DIR/venv"
 
+echo_info "Creando entorno virtual en $VENV_DIR..."
+sudo -u "$USER_NAME" python3 -m venv "$VENV_DIR"
 
-# Actualizar pip
-pip install --upgrade pip
+if [ -d "$VENV_DIR" ]; then
+    echo_success "Entorno virtual creado correctamente."
+else
+    echo_error "Fallo al crear el entorno virtual."
+    exit 1
+fi
 
-# Instalar las librerías
-pip install tk==0.1.0 customtkinter==5.2.2 pillow==10.4.0 requests==2.32.3 --break-system-packages
+echo_info "Actualizando pip en el entorno virtual..."
+sudo -u "$USER_NAME" "$VENV_DIR/bin/pip" install --upgrade pip
+
+echo_info "Instalando las librerías de pip necesarias en el entorno virtual..."
+sudo -u "$USER_NAME" "$VENV_DIR/bin/pip" install tk==0.1.0 customtkinter==5.2.2 pillow==10.4.0 requests==2.32.3
 
 # Verificar la instalación de las librerías
-REQUIRED_LIBS=("tk==0.1.0 customtkinter==5.2.2" "pillow==10.4.0" "requests==2.32.3")
+REQUIRED_LIBS=("tk" "customtkinter" "pillow" "requests")
+declare -A LIB_VERSIONS=( ["tk"]="0.1.0" ["customtkinter"]="5.2.2" ["pillow"]="10.4.0" ["requests"]="2.32.3" )
+
 for lib in "${REQUIRED_LIBS[@]}"; do
-    pip show "${lib%%==*}" > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        echo_success "La librería '$lib' está instalada."
+    VERSION_EXPECTED=${LIB_VERSIONS[$lib]}
+    VERSION_INSTALLED=$(sudo -u "$USER_NAME" "$VENV_DIR/bin/pip" show "$lib" | grep ^Version: | awk '{print $2}')
+    if [ "$VERSION_INSTALLED" == "$VERSION_EXPECTED" ]; then
+        echo_success "La librería '$lib==$VERSION_EXPECTED' está instalada correctamente."
     else
-        echo_error "La librería '$lib' no se pudo instalar."
-        deactivate
+        echo_error "La librería '$lib==$VERSION_EXPECTED' no se pudo instalar correctamente. Versión instalada: $VERSION_INSTALLED"
         exit 1
     fi
 done
 
-# Desactivar el entorno virtual
-deactivate
-
-echo_success "Todas las librerías de pip han sido instaladas correctamente."
+echo_success "Todas las librerías de pip han sido instaladas correctamente en el entorno virtual."
 
 # Opcional: Instalar build-essential para compilaciones de paquetes Python
 if dpkg -l | grep -qw build-essential; then
@@ -181,4 +203,8 @@ apt-get clean
 
 echo_success "Instalación y configuración completadas exitosamente."
 echo_info "Por favor, reinicia tu sesión para que los cambios en el grupo 'docker' surtan efecto."
+
+echo_info "Para activar el entorno virtual, navega al directorio del script y ejecuta:"
+echo "source $VENV_DIR/bin/activate"
+
 
