@@ -54,3 +54,9 @@ Donde:
 
 Si no tenemos un token o no estamos registrados debemos de hacerlo en [offs.es](https://offs.es).
 
+
+Para salir del entorno de virtual de python **(venv)** ejectar:
+
+```bash
+deactivate
+```
