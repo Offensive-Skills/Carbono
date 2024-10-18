@@ -25,7 +25,6 @@ class CourseChallengeFrame(ctk.CTkFrame):
         self.jobs_list = []
         self.statusIP = ""
         self.nombreReto = {}
-        self.actual_format = "pdf"
         self.course = None
         self.module = None
         
@@ -262,53 +261,9 @@ class CourseChallengeFrame(ctk.CTkFrame):
         checkbox_frame = ctk.CTkFrame(self.details_frame, fg_color=Config.gris_fondo)
         checkbox_frame.pack(fill='x', pady=(10, 10), padx=20)
 
-        self.pdf_var = IntVar()
-        self.md_var = IntVar()
-
-        self.pdf_var.set(1)
-        self.actual_format = "pdf"
-
-        def update_checkbox(format):
-            self.actual_format = format
-
-            if (format == "pdf"):
-                self.pdf_var.set(1)
-                self.md_var.set(0)
-            elif(format == "md"):
-                self.pdf_var.set(0)
-                self.md_var.set(1)
 
 
-        self.checkbox_pdf = ctk.CTkCheckBox(checkbox_frame, text="PDF",onvalue=1, offvalue=0, variable=self.pdf_var,command=lambda: update_checkbox("pdf"), fg_color=Config.gris_fondo, hover_color=Config.verde_secundario)
-        self.checkbox_pdf.grid(row=0, column=0, padx=20, pady=10)
 
-        self.checkbox_md = ctk.CTkCheckBox(checkbox_frame, text="MD", onvalue=1, offvalue=0, variable=self.md_var ,command=lambda: update_checkbox("md"), fg_color=Config.gris_fondo, hover_color=Config.verde_secundario)
-        self.checkbox_md.grid(row=1, column=0, padx=20)
-
-        get_writeup_frame = ctk.CTkFrame(self.details_frame, fg_color=Config.gris_fondo)
-        get_writeup_frame.pack(fill='x', pady=(10, 20), padx=20)
-
-        submit_button_writeup = ctk.CTkButton(
-        get_writeup_frame,
-            text="Descargar writeup",
-            fg_color=Config.verde_primario, hover_color=Config.verde_secundario,
-            font=(Config.font_letter,18),
-            command=lambda: self.download_writeup() 
-        )
-        submit_button_writeup.grid(row=0, column=1, sticky="ew")
-
-        if challenge.has_file == 1:
-            get_files_frame = ctk.CTkFrame(self.details_frame, fg_color=Config.gris_fondo)
-            get_files_frame.pack(fill='x', pady=(10, 20), padx=20)
-
-            submit_button_has_file = ctk.CTkButton(
-                get_files_frame,
-                text="Descargar ficheros del reto",
-                fg_color=Config.verde_primario, hover_color=Config.verde_secundario,
-                font=(Config.font_letter,18),
-                command=lambda: self.obtainFiles() 
-            )
-            submit_button_has_file.grid(row=0, column=1, sticky="ew")
 
         # BOTONES DE RUN, STOP y RESTART
         if challenge.is_docker == 1:
@@ -368,94 +323,5 @@ class CourseChallengeFrame(ctk.CTkFrame):
             print(f"Error de conexión: {e}")
 
 
- # FUNCIONAR PARA DESCARGAR FICHEROS RELACIONADOS
 
-    def obtainFiles(self):
-        url = Config.endpoint_get_files
-        data = {
-            "challengeID": self.current_challenge.id,
-            "token": Config.api_token
-        }
-
-        try:
-            response = requests.post(url, json=data)
-            if response.status_code == 200:
-                home_path = Config.path
-                folder_path = os.path.join(home_path, "Offensive_skills")
-
-                # Crear la carpeta si no existe
-                if not os.path.exists(folder_path):
-                    os.makedirs(folder_path)
-
-                name = self.current_challenge.tittle.lower()
-                challenge_path = os.path.join(home_path+"/Offensive_skills/", name)
-
-                if not os.path.exists(challenge_path):
-                    os.makedirs(challenge_path)
-
-                content_path = os.path.join(challenge_path, "content")
-
-                if not os.path.exists(content_path):
-                    os.makedirs(content_path)
-
-                file_path = os.path.join(content_path, name+".zip")
-
-                # Guardar el archivo en la nueva carpeta
-                with open(file_path, 'wb') as f:
-                    for chunk in response.iter_content(chunk_size=8192):
-                        f.write(chunk)
-                
-            
-                msj = f"Los archivos se han descargado correctamente: {Config.path}/Offensive_skills/{name}/content/file.zip"
-                CustomDialog(self, title="Files", message=msj)
-            else:
-                CustomDialog(self, title="Files", message="Hubo un error al descargar el archivo")
-        
-        except requests.exceptions.RequestException as e:
-            print(f"Error de conexión: {e}")
-
- # FUNCIONAR PARA DESCARGAR EL WRITEUP
-
-    def download_writeup(self):
-        url = Config.endpoint_get_writeup
-        data = {
-            "challengeID": self.current_challenge.id,
-            "token": Config.api_token,
-            "format": self.actual_format
-        }
-
-        try:
-            response = requests.post(url, json=data)
-            if response.status_code == 200:
-                home_path = Config.path
-                folder_path = os.path.join(home_path, "Offensive_skills")
-
-                if not os.path.exists(folder_path):
-                    os.makedirs(folder_path)
-
-                    name = self.current_challenge.tittle.lower()
-                challenge_path = os.path.join(home_path+"/Offensive_skills/", name)
-
-                if not os.path.exists(challenge_path):
-                    os.makedirs(challenge_path)
-
-                writeup_path = os.path.join(challenge_path, "writeup")
-
-                if not os.path.exists(writeup_path):
-                    os.makedirs(writeup_path)
-
-                file_path = os.path.join(writeup_path, name+f".{self.actual_format}")
-
-                # Guardar el archivo en la nueva carpeta
-                with open(file_path, 'wb') as f:
-                    for chunk in response.iter_content(chunk_size=8192):
-                        f.write(chunk)
-                
-                msj = f"Los archivos se han descargado correctamente: {Config.path}/Offensive_skills/{name}/writeup/writeup.{self.actual_format}"
-                CustomDialog(self, title="Files", message=msj)
-            else:
-                CustomDialog(self, title="Files", message="Hubo un error al descargar el archivo")
-        
-        except requests.exceptions.RequestException as e:
-            print(f"Error de conexión: {e}")
 

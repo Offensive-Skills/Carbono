@@ -80,6 +80,22 @@ else
     fi
 fi
 
+echo_info "Verificando si python3-tk está instalado..."
+
+if dpkg -l | grep -qw python3-tk; then
+    echo_success "python3-tk ya está instalado."
+else
+    echo_info "Instalando python3-tk..."
+    apt-get install -y python3-tk
+    if dpkg -l | grep -qw python3-tk; then
+        echo_success "python3-tk instalado correctamente."
+    else
+        echo_error "Fallo al instalar python3-tk."
+        exit 1
+    fi
+fi
+
+
 # 3. Instalar Docker
 if command_exists docker; then
     echo_success "Docker ya está instalado."
@@ -212,6 +228,6 @@ echo_info "Para poder ejecutarlo, necesitas ejecutar lo siguiente:"
 echo_info "    source venv/bin/activate"
 echo
 echo_info "Ahora podrás arrancar la aplicación ejecutando:"
-echo_info "    python app.py --username <user> --api-token <token>
+echo_info "    python app.py --username <user> --api-token <token>"
 
 
