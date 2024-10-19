@@ -30,12 +30,14 @@ sudo ./setup.sh
 Esta herramienta permite la descarga de archivos con retos y writeups. Por defecto, se descargarán en una carpeta llamada `offensiveSkills`, que se creará en el directorio **home (./~)** del usuario. Si deseamos que se esta carpeta se cree en otro repositorio debemos de especificarlo usando una variable global llamada **OFFS_PATH**
 
 ```bash
+export OFFS_PATH="~/Desktop/"
 echo 'export OFFS_PATH="~/Desktop/"' >  ~/.bashrc
 ```
 
 O en el caso de que usemos otro tipo de shell como zsh(kali linux):
 
 ```bash
+export OFFS_PATH="~/Desktop/"
 echo 'export OFFS_PATH="~/Desktop/"' >  ~/.zshrc
 ```
 
