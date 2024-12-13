@@ -2,6 +2,7 @@
 ######  Deed
 ######  Canonical URL:  https://creativecommons.org/licenses/by-nc-sa/4.0/
 ###### [**See the legal code**](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.en)
+###### Carbono © 2024 by Offensive Skills is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
 
 ## You are free to:
 - **Share**: copy and redistribute the material in any medium or format. 
