@@ -78,6 +78,7 @@ class ModulesFrame(ctk.CTkFrame):
                 
                 module_data = response.json()
                 if isinstance(module_data, list):
+                    
                     self.modules = [Module(id=v['id'] ,tittle=v['name'], description=v['description']) for v in module_data]
                     self.module_frames = []
                     self.redistribute_frames(max(1, self.winfo_width() // self.default_size))
