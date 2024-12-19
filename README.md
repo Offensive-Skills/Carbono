@@ -51,8 +51,8 @@ python3 app.py --username username --api-token api_token
 ```
 
 Donde:
-- username: Debe ser nuestro nombre de usuario.
-- api_token: Token asociado al usuario.
+- `username`: Debe ser nuestro nombre de usuario.
+- `api_token`: Token asociado al usuario.
 
 Si no tenemos un token o no estamos registrados debemos de hacerlo en [offs.es](https://offs.es).
 
@@ -62,3 +62,9 @@ Para salir del entorno de virtual de python **(venv)** ejectar:
 ```bash
 deactivate
 ```
+
+---
+# License 
+Carbono © 2024 by Offensive Skills is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+
+You can read more about the License in the [`LICENSE` documentation](./LICENSE.md)
