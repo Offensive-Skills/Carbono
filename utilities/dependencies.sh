@@ -1,0 +1,1 @@
+echo "tesst" > /tmp/conffs
