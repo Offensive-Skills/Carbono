@@ -136,9 +136,9 @@ else
     if id -nG "$USER_NAME" | grep -qw "docker"; then
         echo_success "Usuario '$USER_NAME' añadido al grupo 'docker' correctamente."
 
-        # Cambiar al grupo docker en la sesión actual
-        echo_info "Cambiando al grupo 'docker' en la sesión actual..."
-        exec sg docker newgrp docker
+        # Informar al usuario que debe aplicar los cambios de grupo
+        echo_info "Para aplicar los cambios en el grupo 'docker' sin reiniciar, ejecuta 'newgrp docker' en tu terminal actual."
+        echo_info "Si prefieres, puedes cerrar sesión y volver a iniciarla."
     else
         echo_error "Fallo al añadir el usuario '$USER_NAME' al grupo 'docker'."
         echo_info "Por favor, cierra la sesión y vuelve a iniciarla para que los cambios surtan efecto."
