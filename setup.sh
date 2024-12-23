@@ -95,7 +95,6 @@ else
     fi
 fi
 
-
 # 3. Instalar Docker
 if command_exists docker; then
     echo_success "Docker ya está instalado."
@@ -164,6 +163,39 @@ else
 fi
 
 # 6. Configurar el entorno virtual y instalar las librerías de pip necesarias en el directorio del script
+
+# Función para obtener la versión principal de Python3
+function get_python3_version() {
+    python3 --version 2>/dev/null | awk '{print $2}' | cut -d. -f1,2
+}
+
+# Obtener la versión de Python3 instalada
+PYTHON_VERSION=$(get_python3_version)
+
+if [ -z "$PYTHON_VERSION" ]; then
+    echo_error "Python3 no está instalado correctamente."
+    exit 1
+fi
+
+echo_info "Versión de Python3 instalada: $PYTHON_VERSION"
+
+# Construir el nombre del paquete venv correspondiente
+VENV_PKG="python${PYTHON_VERSION}-venv"
+
+# Verificar si el paquete venv ya está instalado
+if dpkg -l | grep -qw "$VENV_PKG"; then
+    echo_success "$VENV_PKG ya está instalado."
+else
+    echo_info "Instalando $VENV_PKG..."
+    apt-get install -y "$VENV_PKG"
+    if dpkg -l | grep -qw "$VENV_PKG"; then
+        echo_success "$VENV_PKG instalado correctamente."
+    else
+        echo_error "Fallo al instalar $VENV_PKG."
+        exit 1
+    fi
+fi
+
 VENV_DIR="$SCRIPT_DIR/venv"
 
 echo_info "Creando entorno virtual en $VENV_DIR..."
@@ -179,12 +211,19 @@ fi
 # Verificar si pip está instalado en el entorno virtual
 if ! sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m pip --version >/dev/null 2>&1; then
     echo_info "pip no encontrado en el entorno virtual. Instalando pip..."
-    sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m ensurepip
-    sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m pip install --upgrade pip
+    sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m ensurepip --upgrade
+    if sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m pip --version >/dev/null 2>&1; then
+        echo_success "pip instalado correctamente en el entorno virtual."
+    else
+        echo_error "Fallo al instalar pip en el entorno virtual."
+        exit 1
+    fi
 else
-    echo_info "Actualizando pip en el entorno virtual..."
-    sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m pip install --upgrade pip
+    echo_info "pip ya está disponible en el entorno virtual."
 fi
+
+echo_info "Actualizando pip en el entorno virtual..."
+sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m pip install --upgrade pip
 
 echo_info "Instalando las librerías de pip necesarias en el entorno virtual..."
 sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m pip install tk==0.1.0 customtkinter==5.2.2 pillow==10.4.0 requests==2.32.3
@@ -199,12 +238,13 @@ for lib in "${REQUIRED_LIBS[@]}"; do
     if [ "$VERSION_INSTALLED" == "$VERSION_EXPECTED" ]; then
         echo_success "La librería '$lib==$VERSION_EXPECTED' está instalada correctamente."
     else
-        echo_error "La librería '$lib==$VERSION_EXPECTED' no se pudo instalar correctamente. Versión instalada: $VERSION_INSTalled"
+        echo_error "La librería '$lib==$VERSION_EXPECTED' no se pudo instalar correctamente. Versión instalada: $VERSION_INSTALLED"
         exit 1
     fi
 done
 
 echo_success "Todas las librerías de pip han sido instaladas correctamente en el entorno virtual."
+
 # Opcional: Instalar build-essential para compilaciones de paquetes Python
 if dpkg -l | grep -qw build-essential; then
     echo_success "build-essential ya está instalado."
@@ -228,12 +268,9 @@ echo_info "Por favor, reinicia tu sesión para que los cambios en el grupo 'dock
 echo
 echo
 
-
 echo_info "¡Enhorabuena. Ya has instalado Carbono! "
 echo_info "Para poder ejecutarlo, necesitas ejecutar lo siguiente:"
 echo_info "    source venv/bin/activate"
 echo
 echo_info "Ahora podrás arrancar la aplicación ejecutando:"
 echo_info "    python app.py --username <user> --api-token <token>"
-
-
