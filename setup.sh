@@ -176,11 +176,18 @@ else
     exit 1
 fi
 
-echo_info "Actualizando pip en el entorno virtual..."
-sudo -u "$USER_NAME" "$VENV_DIR/bin/pip" install --upgrade pip
+# Verificar si pip está instalado en el entorno virtual
+if ! sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m pip --version >/dev/null 2>&1; then
+    echo_info "pip no encontrado en el entorno virtual. Instalando pip..."
+    sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m ensurepip
+    sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m pip install --upgrade pip
+else
+    echo_info "Actualizando pip en el entorno virtual..."
+    sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m pip install --upgrade pip
+fi
 
 echo_info "Instalando las librerías de pip necesarias en el entorno virtual..."
-sudo -u "$USER_NAME" "$VENV_DIR/bin/pip" install tk==0.1.0 customtkinter==5.2.2 pillow==10.4.0 requests==2.32.3
+sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m pip install tk==0.1.0 customtkinter==5.2.2 pillow==10.4.0 requests==2.32.3
 
 # Verificar la instalación de las librerías
 REQUIRED_LIBS=("tk" "customtkinter" "pillow" "requests")
@@ -188,17 +195,16 @@ declare -A LIB_VERSIONS=( ["tk"]="0.1.0" ["customtkinter"]="5.2.2" ["pillow"]="1
 
 for lib in "${REQUIRED_LIBS[@]}"; do
     VERSION_EXPECTED=${LIB_VERSIONS[$lib]}
-    VERSION_INSTALLED=$(sudo -u "$USER_NAME" "$VENV_DIR/bin/pip" show "$lib" | grep ^Version: | awk '{print $2}')
+    VERSION_INSTALLED=$(sudo -u "$USER_NAME" "$VENV_DIR/bin/python" -m pip show "$lib" | grep ^Version: | awk '{print $2}')
     if [ "$VERSION_INSTALLED" == "$VERSION_EXPECTED" ]; then
         echo_success "La librería '$lib==$VERSION_EXPECTED' está instalada correctamente."
     else
-        echo_error "La librería '$lib==$VERSION_EXPECTED' no se pudo instalar correctamente. Versión instalada: $VERSION_INSTALLED"
+        echo_error "La librería '$lib==$VERSION_EXPECTED' no se pudo instalar correctamente. Versión instalada: $VERSION_INSTalled"
         exit 1
     fi
 done
 
 echo_success "Todas las librerías de pip han sido instaladas correctamente en el entorno virtual."
-
 # Opcional: Instalar build-essential para compilaciones de paquetes Python
 if dpkg -l | grep -qw build-essential; then
     echo_success "build-essential ya está instalado."
