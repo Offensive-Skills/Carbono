@@ -135,11 +135,16 @@ else
     usermod -aG docker "$USER_NAME"
     if id -nG "$USER_NAME" | grep -qw "docker"; then
         echo_success "Usuario '$USER_NAME' añadido al grupo 'docker' correctamente."
+
+        # Cambiar al grupo docker en la sesión actual
+        echo_info "Cambiando al grupo 'docker' en la sesión actual..."
+        exec sg docker newgrp docker
     else
         echo_error "Fallo al añadir el usuario '$USER_NAME' al grupo 'docker'."
         echo_info "Por favor, cierra la sesión y vuelve a iniciarla para que los cambios surtan efecto."
     fi
 fi
+
 
 # 5. Instalar Docker Compose
 DOCKER_COMPOSE_VERSION="2.20.3"

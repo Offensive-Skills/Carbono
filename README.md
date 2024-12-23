@@ -63,6 +63,8 @@ Para salir del entorno de virtual de python **(venv)** ejectar:
 deactivate
 ```
 
+> El script setup.sh es compatible con distribuciones que utilicen el instalador de paquetes apt (debian), incluido dentro de WSL. En el caso de usar WSL hay que configurarlo correctamente para poder acceder a la red de docker desde el equipo anfitrión.
+
 ---
 # License 
 Carbono © 2024 by Offensive Skills is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
