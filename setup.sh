@@ -117,7 +117,7 @@ else
     apt-get update -y
 
     # Instalar Docker Engine
-    apt-get install -y docker-ce docker-cli containerd.io
+    apt-get install -y docker-ce-cli docker-cli containerd.io
 
     # Verificar la instalación de Docker
     if command_exists docker; then
