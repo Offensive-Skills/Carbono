@@ -19,6 +19,8 @@ Para la intalación de esta herramienta debemos ejecutar el fichero de **setup**
 sudo ./setup.sh
 ```
 
+> Si no tenías instalado docker previamente es necesario reinicar el equipo para que la configuración de permisos sea correcta.
+
 1. Actualiza los paquetes del sistemas para asegurarnos de tener las últimas versiones de las herramientas.
 2. Instala python3 y pip3.
 3. Instala docker y docker-compose.
