@@ -115,7 +115,13 @@ else
             "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
             bookworm stable" | \
             sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-        
+
+        # Actualizamos
+        apt-get update -y
+
+        # Instalamos Docker Engine
+        apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
     else
         echo_info "Instalando Docker para Ubuntu..."
 
