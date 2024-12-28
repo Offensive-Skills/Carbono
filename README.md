@@ -15,6 +15,8 @@ Cuenta con centenares de retos de ciberseguridad, tanto de carácter individual,
 
 Para la intalación de esta herramienta debemos ejecutar el fichero de **setup**.
 
+> Se recomienda ejecutar `apt upgrade` para tener todos los paquetes actualizados y no surjan problemas de incompatibilidad. Hay que tener en cuenta que si el equipo lleva mucho sin actualizarse o es una maquina virtual recien instalada este comando podría demorarse mucho tiempo (aun asi es recomendable su ejecución).
+
 ```bash
 sudo ./setup.sh
 ```
