@@ -99,29 +99,47 @@ fi
 if command_exists docker; then
     echo_success "Docker ya está instalado."
 else
-    echo_info "Instalando Docker..."
+    OS=$(lsb_release -is)
+    if [ "$OS" != "Kali" ]; then
+        echo_info "Instalando Docker en Kali Linux..."
 
-    # Actualizar el índice de paquetes e instalar paquetes necesarios para usar el repositorio HTTPS
-    apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
+        apt-get install -y ca-certificates curl
 
-    # Añadir la clave GPG oficial de Docker
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+        install -m 0755 -d /etc/apt/keyrings
 
-    # Añadir el repositorio de Docker a APT
-    DISTRO=$(lsb_release -cs)
-    if [ "$DISTRO" = "kali-rolling" ]; then
-        DISTRO="bookworm"
+        curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+
+        chmod a+r /etc/apt/keyrings/docker.asc
+
+        echo \
+            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+            bookworm stable" | \
+            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        
+    else
+        echo_info "Instalando Docker para Ubuntu..."
+
+        # Actualizar el índice de paquetes e instalar paquetes necesarios para usar el repositorio HTTPS
+        apt-get install -y ca-certificates curl
+
+        # Crear el directorio /etc/apt/keyrings
+        install -m 0755 -d /etc/apt/keyrings        
+
+        # Añadir la clave GPG oficial de Docker
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+        chmod a+r /etc/apt/keyrings/docker.asc
+        
+        echo \
+            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+            $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+        # Actualizar el índice de paquetes
+        apt-get update -y
+
+        # Instalar Docker Engine
+        apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     fi
-
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-      $DISTRO stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-    # Actualizar el índice de paquetes
-    apt-get update -y
-
-    # Instalar Docker Engine
-    apt-get install -y docker-ce docker-ce-cli containerd.io
 
     # Verificar la instalación de Docker
     if command_exists docker; then
