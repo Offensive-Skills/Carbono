@@ -100,7 +100,7 @@ if command_exists docker; then
     echo_success "Docker ya está instalado."
 else
     OS=$(lsb_release -is)
-    if [ "$OS" != "Kali" ]; then
+    if [ "$OS" = "Kali" ]; then
         echo_info "Instalando Docker en Kali Linux..."
 
         apt-get install -y ca-certificates curl
