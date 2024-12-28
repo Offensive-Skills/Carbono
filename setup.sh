@@ -44,8 +44,8 @@ echo_info "Actualizando la lista de paquetes..."
 apt-get update -y
 
 # Actualizar los paquetes existentes
-echo_info "Actualizando los paquetes instalados..."
-apt-get upgrade -y
+# echo_info "Actualizando los paquetes instalados..."
+# apt-get upgrade -y
 
 # Función para verificar si un comando existe
 function command_exists() {
