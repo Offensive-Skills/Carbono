@@ -44,8 +44,8 @@ echo_info "Actualizando la lista de paquetes..."
 apt-get update -y
 
 # Actualizar los paquetes existentes
-echo_info "Actualizando los paquetes instalados..."
-apt-get upgrade -y
+# echo_info "Actualizando los paquetes instalados..."
+# apt-get upgrade -y
 
 # Función para verificar si un comando existe
 function command_exists() {
@@ -108,9 +108,14 @@ else
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
     # Añadir el repositorio de Docker a APT
+    DISTRO=$(lsb_release -cs)
+    if [ "$DISTRO" = "kali-rolling" ]; then
+        DISTRO="bookworm"
+    fi
+
     echo \
       "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-      $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+      $DISTRO stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
     # Actualizar el índice de paquetes
     apt-get update -y
@@ -147,25 +152,25 @@ fi
 
 
 # 5. Instalar Docker Compose
-DOCKER_COMPOSE_VERSION="2.20.3"
+# DOCKER_COMPOSE_VERSION="2.20.3"
 
-if command_exists docker-compose; then
-    echo_success "Docker Compose ya está instalado."
-else
-    echo_info "Instalando Docker Compose versión $DOCKER_COMPOSE_VERSION..."
+# if command_exists docker-compose; then
+#     echo_success "Docker Compose ya está instalado."
+# else
+#     echo_info "Instalando Docker Compose versión $DOCKER_COMPOSE_VERSION..."
 
-    curl -L "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#     curl -L "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
-    chmod +x /usr/local/bin/docker-compose
+#     chmod +x /usr/local/bin/docker-compose
 
-    # Verificar la instalación
-    if command_exists docker-compose; then
-        echo_success "Docker Compose instalado correctamente."
-    else
-        echo_error "Fallo al instalar Docker Compose."
-        exit 1
-    fi
-fi
+#     # Verificar la instalación
+#     if command_exists docker-compose; then
+#         echo_success "Docker Compose instalado correctamente."
+#     else
+#         echo_error "Fallo al instalar Docker Compose."
+#         exit 1
+#     fi
+# fi
 
 # 6. Configurar el entorno virtual y instalar las librerías de pip necesarias en el directorio del script
 
