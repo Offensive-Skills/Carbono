@@ -203,6 +203,8 @@ function get_python3_version() {
     python3 --version 2>/dev/null | awk '{print $2}' | cut -d. -f1,2
 }
 
+apt install -y --only-upgrade python3 python3-pip python3-venv
+
 # Obtener la versión de Python3 instalada
 PYTHON_VERSION=$(get_python3_version)
 
