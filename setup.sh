@@ -232,7 +232,7 @@ else
     fi
 fi
 
-VENV_DIR="$SCRIPT_DIR/venv"
+VENV_DIR="$SCRIPT_DIR/venv_carbono"
 
 echo_info "Creando entorno virtual en $VENV_DIR..."
 sudo -u "$USER_NAME" python3 -m venv "$VENV_DIR"
