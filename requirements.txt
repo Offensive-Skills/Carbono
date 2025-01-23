@@ -1,0 +1,4 @@
+tk==0.1.0
+customtkinter==5.2.2
+pillow==10.4.0
+requests==2.32.3
