@@ -1,2 +1,25 @@
+# Bytecode de Python
+__pycache__/
+*.pyc
+
+# Builds y distribuciones
+build/
+dist/
+*.egg-info/
+
+# Entornos virtuales
 venv/
-Pipfile*
+.env/
+
+# Archivos de configuración local
+*.local
+
+# Archivos grandes/media
+*.mp4
+*.zip
+*.png  # Si decides excluir imágenes
+
+# Herramientas específicas
+Pipfile
+Pipfile.lock
+Pipfile.*
