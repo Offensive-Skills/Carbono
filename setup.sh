@@ -306,7 +306,7 @@ echo
 
 echo_info "¡Enhorabuena. Ya has instalado Carbono! "
 echo_info "Para poder ejecutarlo, necesitas ejecutar lo siguiente:"
-echo_info "    source venv/bin/activate"
+echo_info "    source venv_carbono/bin/activate"
 echo
 echo_info "Ahora podrás arrancar la aplicación ejecutando:"
 echo_info "    python app.py --username <user> --api-token <token>"

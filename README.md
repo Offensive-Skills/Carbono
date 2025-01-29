@@ -50,7 +50,7 @@ echo 'export OFFS_PATH="~/Desktop/"' >  ~/.zshrc
 Para iniciar la herramienta debemos ejecutar un comando como el siguiente:
 
 ```bash
-source venv/bin/activate
+source venv_carbono/bin/activate
 python3 app.py --username username --api-token api_token
 ```
 
