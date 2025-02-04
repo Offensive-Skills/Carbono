@@ -216,21 +216,22 @@ fi
 echo_info "Versión de Python3 instalada: $PYTHON_VERSION"
 
 # # Construir el nombre del paquete venv correspondiente
-# VENV_PKG="python${PYTHON_VERSION}-venv"
+# VENV_PKG="python${PYTHON_VERSION}-venv" // TODO Revisar
+VENV_PKG="python3-venv"
 
-# # Verificar si el paquete venv ya está instalado
-# if dpkg -l | grep -qw "$VENV_PKG"; then
-#     echo_success "$VENV_PKG ya está instalado."
-# else
-#     echo_info "Instalando $VENV_PKG..."
-#     apt-get install -y "$VENV_PKG"
-#     if dpkg -l | grep -qw "$VENV_PKG"; then
-#         echo_success "$VENV_PKG instalado correctamente."
-#     else
-#         echo_error "Fallo al instalar $VENV_PKG."
-#         exit 1
-#     fi
-# fi
+# Verificar si el paquete venv ya está instalado
+if dpkg -l | grep -qw "$VENV_PKG"; then
+    echo_success "$VENV_PKG ya está instalado."
+else
+    echo_info "Instalando $VENV_PKG..."
+    apt-get install -y "$VENV_PKG"
+    if dpkg -l | grep -qw "$VENV_PKG"; then
+        echo_success "$VENV_PKG instalado correctamente."
+    else
+        echo_error "Fallo al instalar $VENV_PKG."
+        exit 1
+    fi
+fi
 
 VENV_DIR="$SCRIPT_DIR/venv_carbono"
 
