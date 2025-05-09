@@ -1,3 +1,10 @@
+> ⚠️ **Este repositorio está obsoleto**  
+>  
+> Esta herramienta ya no se encuentra en desarrollo ni recibe mantenimiento.  
+> Ahora debes usar la nueva aplicación **Grafeno**, disponible en:  
+> 👉 [https://github.com/Offensive-Skills/Grafeno](https://github.com/Offensive-Skills/Grafeno)  
+>  
+
 # Introducción
 
 ![image](./images/carbono.png)
